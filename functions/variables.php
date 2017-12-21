@@ -28,13 +28,12 @@ ini_set('default_socket_timeout', 2);
 
 $random_blurp = rand(1000,99999);
 
-$current_domain = "certificatemonitor.org";
-$current_link = "certificatemonitor.org";
+$current_domain = getenv('VIRTUAL_HOST');
+$current_link = getenv('VIRTUAL_HOST');
 
 // set this to a location outside of your webroot so that it cannot be accessed via the internets.
 
-$pre_check_file = '/home/certmon/domains/certificatemonitor.org/cert-monitor/pre_checks.json';
-$check_file = '/home/certmon/domains/certificatemonitor.org/cert-monitor/checks.json';
-$deleted_check_file = '/home/certmon/domains/certificatemonitor.org/cert-monitor/deleted_checks.json';
+$pre_check_file = '/opt/cert-monitor/pre_checks.json';
+$check_file = '/opt/cert-monitor/checks.json';
+$deleted_check_file = '/opt/cert-monitor/deleted_checks.json';
 
-?>

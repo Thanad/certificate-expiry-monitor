@@ -1,0 +1,55 @@
+version: '2'
+
+services:
+
+  lb:
+    image: dockercloud/haproxy
+    depends_on:
+      - apache
+    links:
+      - apache
+      - mail
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 80:80
+      - 1936:1936
+    networks:
+      default:
+        aliases:
+          - lb.test
+
+  apache:
+    build: .
+    depends_on:
+      - mail
+    ports:
+      - 80
+    volumes:
+      - .:/var/www/html
+      - cert_data:/opt/cert-monitor
+    environment:
+      - VIRTUAL_HOST=ssl.test
+
+  mail:
+      # https://hub.docker.com/r/djfarrelly/maildev
+      image: djfarrelly/maildev
+      environment:
+        - VIRTUAL_HOST=mail.ssl.test
+        - EXCLUDE_PORTS=25
+      volumes:
+        - ./docker/mail/rules.json:/rules.json
+      ports:
+        - 80
+        - 25
+      command: bin/maildev --web 80 --smtp 25 --auto-relay-rules /rules.json
+      networks:
+          default:
+            aliases:
+              - mail.ssl.test
+              - smtp.ssl.test
+
+volumes:
+  cert_data:
+
+
